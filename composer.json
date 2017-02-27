@@ -1,0 +1,6 @@
+{
+    "require": {
+        "symfony/console": "^3.2",
+        "aizuyan/img2ascii": "^2.2"
+    }
+}
