@@ -288,6 +288,11 @@
 
 				$o	=	$this->output;
 
+				$fields	=	[
+									'id','link','comments','images','name','name_tags','place',
+									'sharedposts','tags','updated_time','created_time'
+				];
+
 				$this->writeHeader("{$entity->getName()} Photos");
 				$o->writeln("");
 
@@ -295,15 +300,43 @@
 
 				$data		=	$this->request(
 													$photos->getRequest(),
-													'photos.json'
+													'photos.json',
+													NULL,
+													$fields
 				);
 
 				//do{
 
+				$this->writeHeader("{$entity->getName()} Photo stream");
+				$o-writeln("");
+
 				foreach($data->getIterator() as $photo){
 
-					var_dump($photo);
-					die();
+					$this->saveCache($photo->getMaxQuality());
+					$o->writeln("Max Quality: {$photo->getMaxQuality()}");
+					$o->writeln("Available Qualities:{$photo->getQualitiesAsString()}");
+					$this->printComments($photo->getComments());
+
+				}
+
+			}
+
+			private function printComments($comments){
+
+				$o	=	$this->output;
+
+				$this->writePurpleHeader("Comments section");
+
+				foreach($comments->getIterator() as $c){
+
+					$o->writeln("");
+					$this->writeHeader("From\t:\t{$c->getFrom()}");
+					$this->writeHeader("FBID\t:\t{$c->getFrom()->getId()}");
+					$o->writeln("");
+					$this->writeYellowHeader("Message");
+					$o->writeln("");
+					$o->writeln($c->getMessage());
+					$o->writeln("");
 
 				}
 
@@ -329,6 +362,18 @@
 								new OutputFormatterStyle('white', 'red', array('bold'))
 				);
 
+				$output->getFormatter()
+				->setStyle(
+								'pheader', 
+								new OutputFormatterStyle('white', 'magenta', array('bold'))
+				);
+
+				$output->getFormatter()
+				->setStyle(
+								'yheader', 
+								new OutputFormatterStyle('black', 'yellow')
+				);
+
 				$this->output	=	$output;
 
 			}
@@ -339,9 +384,21 @@
 
 			}
 
+			public function writePurpleHeader($title,$width=80){
+
+				$this->output->writeln(sprintf("<pheader>%s</pheader>",str_pad($title,$width)));
+
+			}
+
 			public function writeRedHeader($title,$width=80){
 
 				$this->output->writeln(sprintf("<rheader>%s</rheader>",str_pad($title,$width)));
+
+			}
+
+			public function writeYellowHeader($title,$width=80){
+
+				$this->output->writeln(sprintf("<yheader>%s</yheader>",str_pad($title,$width)));
 
 			}
 

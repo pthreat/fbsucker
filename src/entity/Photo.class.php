@@ -28,7 +28,6 @@
 
 			public function getCreatedAt($format=NULL){
 
-
 				$date	=	\DateTime::createFromFormat(\DateTime::ATOM,$this->created_time);
 
 				if(!$date){
@@ -199,7 +198,7 @@
 
 				$qualities	=	Array();
 			
-				foreach($this->getGraphAttribute('images') as $image){
+				foreach($this->images as $image){
 
 					$image	=	(Array)$image;
 					unset($image['source']);

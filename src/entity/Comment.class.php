@@ -7,14 +7,6 @@
 
 		class Comment extends AbstractEntity{
 
-			private	$profile	=	NULL;
-
-			public function getId(){
-
-				return $this->getGraphAttribute("id");
-
-			}
-
 			public function getCreatedAt($format=NULL){
 
 				$date	=	$this->getGraphAttribute("created_time");
@@ -26,37 +18,23 @@
 
 			public function getFrom(){
 
-				if($this->profile){
+				$data	=	clone($this->getGraphData());
+				$data->set($this->from);
+				$data->getRequest()->setObjectId($this->from->id);
 
-					return $this->profile;
-
-				}
-
-				$from	=	$this->getGraphAttribute('from');
-
-				if(!isset($from->name)){
-
-					throw new \RuntimeException("Can not get name of user who created this comment");
-
-				}
-
-				$from->username	=	$from->name;
-				$this->profile		=	new ProfileEntity();
-				$this->profile->setGraphData($from);
-
-				return $this->profile;
+				return new ProfileEntity($data);
 
 			}
 
 			public function getLikes(){
 
-				return $this->getGraphAttribute('like_count');
+				return $this->like_count;
 
 			}
 
 			public function getMessage($clean=FALSE){
 
-				$message = $this->getGraphAttribute('message');
+				$message = $this->message;
 
 				if(!$clean){
 
