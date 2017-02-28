@@ -61,10 +61,26 @@
 
 			}
 
+			private function checkDataError($data){
+
+				if(!isset($data->error)){
+
+					return;
+
+				}
+
+				throw new \LogicException(
+													$data->error->message,
+													$data->error->code
+				);
+
+			}
+
 			public function set($data){
 
 				if($data instanceof \stdClass){
 
+					$this->checkDataError($data);
 					$this->data	=	$data;
 					return $this;
 
@@ -95,6 +111,8 @@
 					throw new \Exception("Could not decode JSON string");
 
 				}
+
+				$this->checkDataError($data);
 
 				$this->data		=	$data;
 

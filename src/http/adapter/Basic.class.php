@@ -16,7 +16,13 @@
 
 				}
 
-				return file_get_contents($path);
+				$context = stream_context_create([
+																'http' => [
+																				'ignore_errors' => true
+																],
+				]);
+
+				return file_get_contents($path,FALSE,$context);
 
 			}
 

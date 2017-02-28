@@ -117,15 +117,16 @@
 				->add($objectId);
 
 				$url->getQuery()
-				->add('access_token',$this->token);
+				->add('access_token',$this->token)
+				->add('metadata',1);
 
-				if($fields){
+				if(is_array($fields)){
 
-					if(is_array($fields)){
+					$fields	=	implode(',',$fields);
 
-						$fields	=	implode(',',$fields);
+				}
 
-					}
+				if(!empty($fields)){
 
 					$url->getQuery()->add('fields',$fields);
 

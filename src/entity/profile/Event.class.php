@@ -1,14 +1,13 @@
 <?php
 
-	namespace stange\fbsucker\entity{
+	namespace stange\fbsucker\entity\profile{
 
-		use \stange\fbsucker\Entity					as	AbstractEntity;
+		use \stange\fbsucker\entity\Profile			as	AbstractProfile;
+		use \stange\fbsucker\entity\User				as	UserEntity;
 		use \stange\fbsucker\entity\Comment			as	CommentEntity;
 		use \stange\fbsucker\entity\Place			as	PlaceEntity;
-		use \stange\fbsucker\collection\Profile	as	ProfileCollection;
-		use \stange\fbsucker\collection\Comment	as	CommentCollection;
 
-		class Event extends AbstractEntity{
+		class Event extends AbstractProfile{
 
 			public function getPlace(){
 
@@ -74,7 +73,7 @@
 
 				foreach($this->getGraphAttribute('admins') as $data){
 
-					$admin	=	new ProfileEntity();
+					$admin	=	new UserEntity();
 					$admin->setGraphData($data);
 					$collection->add($admin);
 

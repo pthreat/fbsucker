@@ -49,6 +49,13 @@
 
 			}
 
+			public function __clone(){
+
+				$this->url['query']	=	clone($this->url['query']);
+				$this->url['path']	=	clone($this->url['path']);
+
+			}
+
 			public function setScheme($scheme){
 
 				$this->url['scheme']	=	$scheme;

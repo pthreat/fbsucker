@@ -10,7 +10,7 @@
 		use \stange\fbsucker\entity\Photo			as	PhotoEntity;
 		use \stange\fbsucker\http\Request;
 
-		class Profile extends AbstractEntity{
+		abstract class Profile extends AbstractEntity{
 
 			public function getZodiacSign(){
 

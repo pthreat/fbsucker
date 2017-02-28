@@ -2,7 +2,7 @@
 
 	namespace stange\fbsucker\entity{
 
-		use \stange\fbsucker\entity\Profile	as	ProfileEntity;
+		use \stange\fbsucker\entity\User		as	UserEntity;
 		use \stange\fbsucker\Entity			as AbstractEntity;
 
 		class Comment extends AbstractEntity{
@@ -22,7 +22,7 @@
 				$data->set($this->from);
 				$data->getRequest()->setObjectId($this->from->id);
 
-				return new ProfileEntity($data);
+				return new UserEntity($data);
 
 			}
 
