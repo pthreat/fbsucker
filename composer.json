@@ -2,13 +2,13 @@
 	"require": {
 		"php": ">=5.4.0",
 		"symfony/console": "^3.2",
-		"aizuyan/img2ascii": "^2.2",
-		"authors": [
-						{
-							"name":	"Federico Stange",
-							"email":	"jpfstange@gmail.com",
-							"role":	"Lead developer"
-						}
-		]
-	}
+		"aizuyan/img2ascii": "^2.2"
+	},
+	"authors": [
+					{
+						"name":	"Federico Stange",
+						"email":	"jpfstange@gmail.com",
+						"role":	"Lead developer"
+					}
+	]
 }
