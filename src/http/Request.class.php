@@ -14,15 +14,18 @@
 		use \stange\fbsucker\graph\Data						as	GraphData;
 		use \stange\fbsucker\graph\request\Fields			as	RequestFields;
 
+		use \stange\fbsucker\request\Cache					as	RequestCache;
+
 		class Request{
 
-			private	$adapter		=	NULL;
-			private	$url			=	NULL;
-			private	$graphData	=	NULL;
-			private	$token		=	NULL;
-			private	$objectId	=	NULL;
+			private	$adapter			=	NULL;
+			private	$url				=	NULL;
+			private	$graphData		=	NULL;
+			private	$token			=	NULL;
+			private	$objectId		=	NULL;
+			private	$cacheAdapter	=	NULL;
 
-			private	$fields		=	NULL;
+			private	$fields			=	NULL;
 
 			public function __construct(Array $args=Array()){
 
@@ -124,6 +127,19 @@
 
 			}
 
+			public function setCache(RequestCache $cache){
+
+				$this->cacheAdapter	=	$cache;
+				return $this;
+
+			}
+
+			public function getCache(){
+	
+				return $this->cacheAdapter;
+
+			}
+
 			public function request($objectId=NULL,$fields=NULL,$version='2.8'){
 
 				$objectId	=	$objectId	?	$objectId	:	$this->objectId;
@@ -150,7 +166,41 @@
 
 				$url->setQuery($this->fields->getQuery());
 
-				$this->graphData->set($this->adapter->request($url));
+				/**
+				 * If the request needs not to be cached
+				 */
+
+				if(!$this->cacheAdapter){
+
+					$this->graphData->set(
+												$this->adapter->request($url)
+					);
+
+					return $this;
+
+				}
+
+				$this->cacheAdapter->setFilename(sprintf('request_%s',base64_encode($url)));
+
+				try{
+			
+					$data	=	$this->getCache()->getContents();
+
+				}catch(\LogicException $e){
+
+					//If the file is not readable, a logic exception will be thrown
+					throw $e;
+
+				}catch(\Exception $e){
+
+					//If the cache file doesn't exists an \Exception will be thrown
+
+					$data	=	$this->adapter->request($url);
+					$this->cacheAdapter->save($data);
+
+				}
+
+				$this->graphData->set($data);
 
 				return $this;
 

@@ -9,6 +9,7 @@
 		use \stange\fbsucker\http\adapter\Basic			as BasicAdapter;
 		use \stange\fbsucker\request\app\Token				as	AppToken;
 		use \stange\fbsucker\entity\profile\Factory		as	ProfileFactory;
+		use \stange\fbsucker\http\request\Cache			as	RequestCache;
 
 		use \Symfony\Component\Console\Command\Command;
 		use \Symfony\Component\Console\Input\InputArgument;
@@ -20,7 +21,6 @@
 
 		abstract class Base extends Command{
 
-			private		$cacheDir	=	NULL;
 			protected	$input		=	NULL;
 			protected	$output		=	NULL;
 			protected	$entity		=	NULL;
@@ -126,8 +126,6 @@
 
 				$profile		=	$input->getOption('profile');
 
-				$this->createCacheDirectory($profile);
-
 				$id			=	$this->input->getOption('id');
 				$secret		=	$this->input->getOption('secret');
 				$fields		=	$this->input->getOption('fields');
@@ -148,6 +146,9 @@
 				$request		=	new GraphRequest([
 															"adapter"	=>	new BasicAdapter(),
 															"token"		=>	$token,
+															"cache"		=>	new RequestCache([
+																										"dir"		=>	"cache",
+															])
 				]);
 
 				$factory			=	new ProfileFactory($request,$profile);
@@ -183,49 +184,6 @@
 
 			abstract protected function __execute(AbstractEntity $entity);
 
-			protected function isInCache($file){
-	
-				return file_exists("{$this->cacheDir}/$file");
-
-			}
-
-			protected function getCacheFile($file){
-
-				return "{$this->dir}/$file";
-
-			}
-
-			protected function request(GraphRequest &$request, $file,$objectId=NULL,$fields=NULL){
-
-				if($this->isInCache($file)){
-					
-					$request->getGraphData()->fromJSON($this->getCacheFile($file));
-					return $request->getGraphData();
-
-				}
-
-				$request->request($objectId,$fields);
-				$request->getGraphData()->save("{$this->cacheDir}/$file");
-
-				return $request->getGraphData();
-
-			}
-
-			public function createCacheDirectory($profile){
-
-				$dir	=	realpath(__DIR__.'/../../..');
-				$dir	=	"$dir/cache/$profile";
-
-				if(!is_dir($dir)){
-
-					mkdir($dir,0777,TRUE);
-
-				}
-
-				$this->cacheDir	=	$dir;
-
-			}
-
 			protected function printPic($pic){
 	
 				$this->output->writeln('8<------------------------------- ASCII ART');
@@ -257,39 +215,6 @@
 
 				$this->writeRedHeader("");
 				$o->writeln("");
-
-			}
-
-			protected function saveCache($url){
-
-				if(!($this->input->getOption('metadata') || $this->input->getOption('ascii'))){
-
-					return FALSE;
-
-				}
-
-				$file	=	basename($url);
-				$file	=	substr($file,0,strpos($file,'?'));
-
-				if(!file_exists("{$this->cacheDir}/$file")){
-
-					$this->output->write("Saving $url to cache ...");
-
-					file_put_contents("{$this->cacheDir}/$file",file_get_contents($url));
-
-				}
-
-				if($this->input->getOption('ascii')){
-
-					$this->printPic("{$this->cacheDir}/$file");
-
-				}
-
-				if($this->input->getOption('metadata')){
-
-					$this->printMetadata("{$this->cacheDir}/$file");
-
-				}
 
 			}
 
