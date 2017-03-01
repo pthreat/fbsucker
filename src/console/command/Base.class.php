@@ -189,11 +189,17 @@
 
 			}
 
+			protected function getCacheFile($file){
+
+				return "{$this->dir}/$file";
+
+			}
+
 			protected function request(GraphRequest &$request, $file,$objectId=NULL,$fields=NULL){
 
 				if($this->isInCache($file)){
 					
-					$request->getGraphData()->fromJSON("{$this->cacheDir}/$file");
+					$request->getGraphData()->fromJSON($this->getCacheFile($file));
 					return $request->getGraphData();
 
 				}

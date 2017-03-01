@@ -1,5 +1,24 @@
 <?php
 
+	/**
+	 * When a request is made to the Facebook Graph API, we pass an object id, for instance
+	 * "1234567". The problem here is that 1234567 could be anything, a User, an Event, a Group
+	 * a Page, etc. 
+	 * This factory solves that problem by fetching the metadata->type parameter from the request
+	 * and checking what kind of object are we querying.
+	 *
+	 * After analyzing the object type, we can set in the *PROPER* ->fields<- to be queried for said object
+	 * id. In this fashion we can get the most of each facebook object.
+	 *
+	 * The only problem with this approach is that we need to make a Graph Request to the object first, and then
+	 * perform another request with the proper fields for the detected object type.
+	 * But as we do not know the object id entered by user input before hand, we have to autodetect the object type
+	 * first and perform this extra (small) request in order to detect the object type.
+	 *
+	 * This factory handles profile objects only.
+	 *
+	 */
+
 	namespace stange\fbsucker\entity\profile{
 
 		use \stange\fbsucker\entity\profile\User			as UserEntity;

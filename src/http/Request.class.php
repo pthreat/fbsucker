@@ -8,10 +8,11 @@
 	namespace stange\fbsucker\http{
 
 		use \stange\fbsucker\request\Url;
-		use \stange\fbsucker\http\iface\Adapter	as HttpAdapterIface;
-		use \stange\fbsucker\http\request\Cursor	as	RequestCursor;
-		use \stange\fbsucker\request\iface\Token	as	TokenIface;
-		use \stange\fbsucker\graph\Data				as	GraphData;
+		use \stange\fbsucker\http\iface\Adapter			as HttpAdapterIface;
+		use \stange\fbsucker\http\request\Cursor			as	RequestCursor;
+		use \stange\fbsucker\request\iface\Token			as	TokenIface;
+		use \stange\fbsucker\graph\Data						as	GraphData;
+		use \stange\fbsucker\graph\request\Fields			as	RequestFields;
 
 		class Request{
 
@@ -21,17 +22,40 @@
 			private	$token		=	NULL;
 			private	$objectId	=	NULL;
 
+			private	$fields		=	NULL;
+
 			public function __construct(Array $args=Array()){
 
-				$adapter	=	isset($args['adapter'])	? $args['adapter']	:	NULL;
-				$url		=	isset($args['url'])		? $args['url']			:	'https://graph.facebook.com';
-				$token	=	isset($args['token'])	? $args['token']		:	NULL;
+				$adapter		=	isset($args['adapter'])		? $args['adapter']	:	NULL;
+				$url			=	isset($args['url'])			? $args['url']			:	'https://graph.facebook.com';
+				$token		=	isset($args['token'])		? $args['token']		:	NULL;
+				$fields		=	isset($args['fields'])		? $args['fields']		:	Array();
 
 				$this->setToken($token);
 				$this->setUrl(new Url($url));
 				$this->setAdapter($adapter);
 
 				$this->graphData	=	new GraphData($this);
+
+				$this->setFields($fields);
+
+				//Add by default the metadata{type} field to be able to identify the 
+				//returned graph object type
+
+				$this->fields->add('metadata{type}');
+
+			}
+
+			public function setFields($fields){
+
+				$this->fields	=	new RequestFields($fields);
+				return $this;
+
+			}
+
+			public function getFields(){
+
+				return $this->fields;
 
 			}
 
@@ -110,27 +134,21 @@
 
 				}
 
+				if($fields !== NULL){
+
+					$this->setFields($fields);
+
+				}
+
 				$url	=	clone($this->url);
 
 				$url->getPath()
 				->add("v$version")
 				->add($objectId);
 
-				$url->getQuery()
-				->add('access_token',$this->token)
-				->add('metadata',1);
+				$this->fields->getQuery()->replace('access_token',$this->token);
 
-				if(is_array($fields)){
-
-					$fields	=	implode(',',$fields);
-
-				}
-
-				if(!empty($fields)){
-
-					$url->getQuery()->add('fields',$fields);
-
-				}
+				$url->setQuery($this->fields->getQuery());
 
 				$this->graphData->set($this->adapter->request($url));
 

@@ -9,7 +9,7 @@
 			private	$params		=	Array();
 			private	$separator	=	'&';
 
-			public function __construct(Array $params,$separator='&'){
+			public function __construct(Array $params=Array(),$separator='&'){
 
 				foreach($params as $name=>$value){
 
@@ -33,7 +33,6 @@
 			}
 
 			public function add($name,$value,$separator='='){
-
 
 				$this->params[]	=	new QueryParam(
 																$name,
