@@ -2,11 +2,11 @@
 
 	namespace stange\fbsucker\http\adapter{
 
-		use stange\fbsucker\http\iface\Adapter	as	AdapterInterface;
+		use stange\fbsucker\http\Adapter			as	BaseHttpAdapter;
 
-		class Basic implements AdapterInterface{
+		class Basic extends BaseHttpAdapter{
 
-			public function request($path,$method=NULL){
+			public function __request($path,$method=NULL){
 
 				$method	=	$method===NULL ? 'get' : $method;
 

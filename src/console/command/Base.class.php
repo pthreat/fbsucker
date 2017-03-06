@@ -6,7 +6,7 @@
 		use \stange\fbsucker\parser\photo\Metadata		as	MetadataParser;
 		use \stange\fbsucker\http\Request					as	GraphRequest;
 		use \stange\fbsucker\Entity							as	AbstractEntity;
-		use \stange\fbsucker\http\adapter\Basic			as BasicAdapter;
+		use \stange\fbsucker\http\adapter\Basic			as BasicHttpAdapter;
 		use \stange\fbsucker\request\app\Token				as	AppToken;
 		use \stange\fbsucker\entity\profile\Factory		as	ProfileFactory;
 		use \stange\fbsucker\http\request\Cache			as	RequestCache;
@@ -24,6 +24,10 @@
 			protected	$input		=	NULL;
 			protected	$output		=	NULL;
 			protected	$entity		=	NULL;
+
+			/**
+			 * Initialize command line styles
+			 */
 
 			private function initializeStyles(){
 
@@ -58,6 +62,11 @@
 				);
 
 			}
+
+			/**
+			 * Print a random ASCII art banner at startup by taking the banner.ascii files located
+			 * at the src/console/banner folder.
+			 */
 
 			private function printBanner(){
 		
@@ -119,39 +128,61 @@
 			protected function execute(InputInterface $input, OutputInterface $output){
 
 				$this->input	=	$input;
-
 				$this->output	=	$output;
+
+				/** Initialize the application styles **/
 				$this->initializeStyles();
+
 				$this->output->writeln($this->printBanner());
 
-				$profile		=	$input->getOption('profile');
-
-				$id			=	$this->input->getOption('id');
-				$secret		=	$this->input->getOption('secret');
-				$fields		=	$this->input->getOption('fields');
+				$profile	=	$input->getOption('profile');
+				$fields	=	$this->input->getOption('fields');
 
 				/**
 				 * Create the application access token
 				 */
 
 				$token	=	new AppToken([
-													'id'		=>	$id,
-													'secret'	=>	$secret,
+													'id'		=>	$this->input->getOption('id'),
+													'secret'	=>	$this->input->getOption('secret')
 				]);
 
 				/**
-				 * Create the graph request
+				 * Create the basic http adapter
+				 */
+
+				 $adapter	=	new BasicHttpAdapter(
+																"cache"	=>	new RequestCache([
+																											"dir"		=>	"cache",
+																])
+				 );
+
+				/**
+				 * Create the graph request, set the previously created HTTP Adapter 
+				 * and the app token into the Graph Request object.
 				 */
 
 				$request		=	new GraphRequest([
-															"adapter"	=>	new BasicAdapter(),
-															"token"		=>	$token,
-															"cache"		=>	new RequestCache([
-																										"dir"		=>	"cache",
-															])
+															"adapter"	=>	$httpAdapter,
+															"token"		=>	$token
 				]);
 
+				/**
+				 * All requests are profile related, since our main purpose, is to fetch profile related data.
+				 *
+				 * Through the profile factory the proper graph API fbsucker entity is created.
+				 *
+				 * For more information read the problem described at the profile factory class. 
+				 *
+				 * @see \stange\fbsucker\entity\profile\Factory
+				 */
+
 				$factory			=	new ProfileFactory($request,$profile);
+
+				/**
+				 * Call the __execute method defined in the derived command class
+				 * As an argument, pass in the built request through the profile factory.
+				 */
 
 				$this->__execute(
 										$factory->build(
@@ -160,6 +191,18 @@
 				);
 
 			}
+
+			/**
+			 * The abstract method __execute is used for each command line command to
+			 * gather information and print it at their own will.
+			 */
+
+			abstract protected function __execute(AbstractEntity $entity);
+
+
+			/**
+			 * The following methods have to be moved to a helper class
+			 */
 
 			protected function printComments($comments){
 
@@ -181,8 +224,6 @@
 				}
 
 			}
-
-			abstract protected function __execute(AbstractEntity $entity);
 
 			protected function printPic($pic){
 	

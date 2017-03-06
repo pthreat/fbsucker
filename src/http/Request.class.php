@@ -1,7 +1,7 @@
 <?php
 
 	/**
-	 * The request class creates the proper URL to be passed to an HTTP Adapter
+	 * The request class creates the proper Graph URL to be passed to an HTTP Adapter
 	 * passed in the constructor, it uses said adapter in order to fetch the contents through http.
 	 */
 
@@ -23,7 +23,6 @@
 			private	$graphData		=	NULL;
 			private	$token			=	NULL;
 			private	$objectId		=	NULL;
-			private	$cacheAdapter	=	NULL;
 
 			private	$fields			=	NULL;
 
@@ -127,19 +126,6 @@
 
 			}
 
-			public function setCache(RequestCache $cache){
-
-				$this->cacheAdapter	=	$cache;
-				return $this;
-
-			}
-
-			public function getCache(){
-	
-				return $this->cacheAdapter;
-
-			}
-
 			public function request($objectId=NULL,$fields=NULL,$version='2.8'){
 
 				$objectId	=	$objectId	?	$objectId	:	$this->objectId;
@@ -165,40 +151,6 @@
 				$this->fields->getQuery()->replace('access_token',$this->token);
 
 				$url->setQuery($this->fields->getQuery());
-
-				/**
-				 * If the request needs not to be cached
-				 */
-
-				if(!$this->cacheAdapter){
-
-					$this->graphData->set(
-												$this->adapter->request($url)
-					);
-
-					return $this;
-
-				}
-
-				$this->cacheAdapter->setFilename(sprintf('request_%s',base64_encode($url)));
-
-				try{
-			
-					$data	=	$this->getCache()->getContents();
-
-				}catch(\LogicException $e){
-
-					//If the file is not readable, a logic exception will be thrown
-					throw $e;
-
-				}catch(\Exception $e){
-
-					//If the cache file doesn't exists an \Exception will be thrown
-
-					$data	=	$this->adapter->request($url);
-					$this->cacheAdapter->save($data);
-
-				}
 
 				$this->graphData->set($data);
 
