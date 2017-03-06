@@ -1,66 +1,38 @@
 <?php
 
 	/**
-	 * For now on, this class is just about file caching 
-	 *
-	 * @TODO build a cache-adapter pattern in order to be able to build a cache adapter through a factory
-	 *
-	 * abstract Cache.class.php
-	 * cache/Adapter
-	 * cache/Factory 
-	 * cache/adapter/File extends CacheAdapter
-	 * cache/adapter/MemCache extends CacheAdapter
-	 * cache/adapter/PDO extends CacheAdapter
-	 *
+	 * File Cache Adapter
 	 */
 
-	namespace stange\fbsucker\cache{
+	namespace stange\fbsucker\cache\adapter{
 
 		use \stange\fbsucker\cache\Adapter	as	AbstractCacheAdapter;
 
 		class File extends AbstractCacheAdapter{
 
-			private	$dir			=	NULL;
-
-			public function setDir($dir){
-
-				$this->dir	=	$dir;
-				return $this;
+			public function __construct(Array $args=Array()){
+		
+				parent::__construct($args);
 
 			}
 
-			public function getDir(){
+			protected function __load($name){
 
-				return $this->dir;
-
-			}
-
-			public function setFilename($name){
-
-				$this->fileName	=	$name;
-				return $this;
-
-			}
-
-			public function getFilename(){
-
-				return $this->fileName;
-
-			}
-
-			public function load($name){
-
-				$file	=	"{$this->dir}/{$name}";
+				$file	=	"{$this->getEntryPoint()}/$name";
 
 				if(!file_exists($file)){
 
-					throw new \Exception("Cache file \"$file\" does not exists");
+					parent::setError("Cache file \"$file\" does not exists");
+					return NULL;
 
 				}
 
 				if(!is_readable($file)){
 
-					throw new \LogicException("Cache file \"$file\" is not readable, check file permissions");
+					$msg	=	"Cache file \"$file\" is not readable, check file permissions";
+					parent::setError($msg);
+
+					return FALSE;
 
 				}
 
@@ -68,11 +40,13 @@
 
 			}
 
-			private function createDirectory($profile){
+			private function createDirectory(){
 
-				if(!is_dir($this->dir)){
+				$ep	=	$this->getEntryPoint();
 
-					return mkdir($this->dir,0777,TRUE);
+				if(!is_dir($ep)){
+
+					return mkdir($ep,0777,TRUE);
 
 				}
 
@@ -80,7 +54,7 @@
 
 			}
 
-			public function save($name,$contents){
+			public function __save($name,$value){
 
 				if(!$this->createDirectory()){
 
@@ -88,26 +62,12 @@
 
 				}
 
-				$file	=	"{$this->dir}/{$this->fileName}";
+				$file	=	"{$this->getEntryPoint()}/$name";
 				$fp	=	fopen($file,'w');
-				fwrite($fp);
+				fwrite($fp,$value);
 				fclose($fp);
 
 				return $this;
-
-			}
-
-			public function __toString(){
-
-				try{
-
-					return $this->getContents();
-
-				}catch(\Exception $e){
-
-					return '';
-
-				}
 
 			}
 
