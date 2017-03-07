@@ -3,7 +3,7 @@
 	namespace stange\fbsucker\cache{
 
 		use \stange\fbsucker\iface\Cache						as	CacheInterface;
-
+		use \stange\fbsucker\iface\Log						as	LoggingInterface;
 		use \stange\fbsucker\cache\exception\NotFound	as	NotFoundException;
 		use \stange\fbsucker\cache\exception\Read			as	ReadException;
 		use \stange\fbsucker\cache\exception\Save			as	WriteException;
@@ -12,6 +12,11 @@
 
 			private	$error		=	NULL;
 			private	$entryPoint	=	NULL;
+			private	$log			=	NULL;
+
+			/** Provide logging capabilities to this class **/
+
+			use \stange\fbsucker\traits\Loggable;
 
 			public function __construct(Array $params=Array()){
 
@@ -19,6 +24,12 @@
 											isset($params['entryPoint']) ? 
 											$params['entryPoint'] : NULL
 				);
+
+				if(isset($params['log'])){
+
+					$this->setLog($params['log']);
+
+				}
 
 			}
 

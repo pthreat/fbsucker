@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "0733fb2209508580e2d2052a64a61a94",
+    "content-hash": "276c8f7a22593436441632be5ce8ac40",
     "packages": [
         {
             "name": "aizuyan/img2ascii",
@@ -89,6 +89,43 @@
                 "psr-3"
             ],
             "time": "2016-10-10T12:19:37+00:00"
+        },
+        {
+            "name": "stange/slog",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/pthreat/slog.git",
+                "reference": "774bf2fbd449ed2bafd1942285ad6c9e2da985e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/pthreat/slog/zipball/774bf2fbd449ed2bafd1942285ad6c9e2da985e1",
+                "reference": "774bf2fbd449ed2bafd1942285ad6c9e2da985e1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.3 || ^7.0"
+            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Federico Stange",
+                    "email": "jpfstange@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A simple PHP logging class",
+            "keywords": [
+                "console logging",
+                "log",
+                "logging"
+            ],
+            "time": "2017-03-07 18:27:59"
         },
         {
             "name": "symfony/console",
@@ -273,9 +310,13 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "stange/slog": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": ">=5.4.0"
+    },
     "platform-dev": []
 }
