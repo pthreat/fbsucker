@@ -4,9 +4,10 @@ spl_autoload_register(function ($class) {
 
 	// project-specific namespace prefix
 	$ns		= 'stange';
-	$classNs	=	substr($class,0,strpos($class,'\\'));
+	$class	=	trim($class,'\\');
+	$pos		=	strpos($class,'stange\\fbsucker');
 
-	if($ns !==  $classNs){
+	if($pos===FALSE){
 
 		return;
 

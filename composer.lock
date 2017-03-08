@@ -96,18 +96,23 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/pthreat/slog.git",
-                "reference": "774bf2fbd449ed2bafd1942285ad6c9e2da985e1"
+                "reference": "afc6b64eb54277789783e85738c14184ef526c20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/pthreat/slog/zipball/774bf2fbd449ed2bafd1942285ad6c9e2da985e1",
-                "reference": "774bf2fbd449ed2bafd1942285ad6c9e2da985e1",
+                "url": "https://api.github.com/repos/pthreat/slog/zipball/afc6b64eb54277789783e85738c14184ef526c20",
+                "reference": "afc6b64eb54277789783e85738c14184ef526c20",
                 "shasum": ""
             },
             "require": {
                 "php": "^5.3.3 || ^7.0"
             },
             "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "stange\\logging\\": "src"
+                }
+            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
@@ -121,11 +126,11 @@
             ],
             "description": "A simple PHP logging class",
             "keywords": [
-                "console logging",
+                "console",
                 "log",
                 "logging"
             ],
-            "time": "2017-03-07 18:27:59"
+            "time": "2017-03-08 15:43:49"
         },
         {
             "name": "symfony/console",

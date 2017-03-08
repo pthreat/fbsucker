@@ -151,11 +151,11 @@
 				 * Create the basic http adapter
 				 */
 
-				 $adapter	=	new BasicHttpAdapter(
+				 $adapter	=	new BasicHttpAdapter([
 																"cache"	=>	new RequestCache([
-																											"dir"		=>	"cache",
+																										"entryPoint" => "cache",
 																])
-				 );
+				 ]);
 
 				/**
 				 * Create the graph request, set the previously created HTTP Adapter 
