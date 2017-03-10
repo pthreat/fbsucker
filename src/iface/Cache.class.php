@@ -2,12 +2,7 @@
 
 	namespace stange\fbsucker\iface{
 
-		use \stange\fbsucker\iface\Log as LoggingInterface;
-
-		interface Cache{
-
-			/** set a logging class **/
-			public function setLog(LoggingInterface $log);
+		interface Cache extends Loggable{
 
 			/** Load cache **/
 			public function load($name);

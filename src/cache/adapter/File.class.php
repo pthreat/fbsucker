@@ -46,6 +46,8 @@
 
 				if(!is_dir($ep)){
 
+					$this->log("Creating cache directory \"$ep\"",'debug');
+
 					return mkdir($ep,0777,TRUE);
 
 				}

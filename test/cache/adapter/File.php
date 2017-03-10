@@ -1,20 +1,21 @@
 <?php 
 
-	echo realpath( __DIR__.'/../../../autoload.php');
-	die();
+	$autoload	=	realpath( __DIR__.'/../../../autoload.php');
+	$composer	=	realpath( __DIR__.'/../../../vendor/autoload.php');
+	require $autoload;
+	require $composer;
 
 	use \stange\fbsucker\cache\adapter\File	as	FileCache;
 	use \stange\logging\Slog;
 
-	$a	=	new Slog();
-
-	die();
-
 	try{
 
 		$cache	=	new FileCache([
-												'entryPoint'=>	'cache',
-												'log'			=>	new Slog()
+												'entry'	=>	'cache',
+												'log'		=>	new Slog([
+																				'echo'	=>	TRUE,
+																				'level'	=>	1
+												])
 		]);
 
 		$cache->sload('test','cache');
